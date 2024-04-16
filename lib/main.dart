@@ -1,61 +1,65 @@
 import 'package:flutter/material.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
         appBar:
-            AppBar(title: const Text('Dynamic ScrollView with Tabs Example')),
-        body: DefaultTabController(
+            AppBar(title: const Text('Nested ScrollView with Tabs Example')),
+        body: const DefaultTabController(
           length: 2, // Number of tabs
-          child: DynamicScrollViewWithTabs(),
+          child: NestedScrollViewWithTabs(),
         ),
       ),
     );
   }
 }
 
-class DynamicScrollViewWithTabs extends StatelessWidget {
+class NestedScrollViewWithTabs extends StatelessWidget {
+  const NestedScrollViewWithTabs({super.key});
+
   @override
   Widget build(BuildContext context) {
-    return CustomScrollView(
-      slivers: <Widget>[
-        SliverToBoxAdapter(
-          child: Container(
-            padding: const EdgeInsets.all(16.0),
-            child: const Text(
-              'This is the header section whose size is determined by its content. Add more text here if you want to increase its height.',
-              style: TextStyle(fontSize: 18),
+    return NestedScrollView(
+      headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
+        return <Widget>[
+          SliverToBoxAdapter(
+            child: Container(
+              padding: const EdgeInsets.all(16.0),
+              child: const Text(
+                'This is the header section whose size is determined by its content. Add more text here if you want to increase its height.\nLorem ipsum blablabla',
+                style: TextStyle(fontSize: 18),
+              ),
             ),
           ),
-        ),
-        SliverPersistentHeader(
-          delegate: _SliverAppBarDelegate(
-            const TabBar(
-              labelColor: Colors.black,
-              unselectedLabelColor: Colors.grey,
-              tabs: [
-                Tab(text: 'List'),
-                Tab(text: 'Grid'),
-              ],
+          SliverPersistentHeader(
+            delegate: _SliverAppBarDelegate(
+              const TabBar(
+                labelColor: Colors.black,
+                unselectedLabelColor: Colors.grey,
+                tabs: [
+                  Tab(text: 'List'),
+                  Tab(text: 'Grid'),
+                ],
+              ),
             ),
+            pinned: true,
           ),
-          pinned: true,
-        ),
-        SliverFillRemaining(
-          child: TabBarView(
-            children: <Widget>[
-              buildListView(),
-              buildGridView(),
-            ],
-          ),
-        ),
-      ],
+        ];
+      },
+      body: TabBarView(
+        children: <Widget>[
+          buildListView(),
+          buildGridView(),
+        ],
+      ),
     );
   }
 
