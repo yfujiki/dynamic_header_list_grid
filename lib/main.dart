@@ -11,19 +11,38 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
-        appBar:
-            AppBar(title: const Text('Nested ScrollView with Tabs Example')),
-        body: const DefaultTabController(
-          length: 2, // Number of tabs
-          child: NestedScrollViewWithTabs(),
-        ),
+        appBar: AppBar(title: const Text('Explicit TabController Example')),
+        body: const ExplicitTabControllerExample(),
       ),
     );
   }
 }
 
-class NestedScrollViewWithTabs extends StatelessWidget {
-  const NestedScrollViewWithTabs({super.key});
+class ExplicitTabControllerExample extends StatefulWidget {
+  const ExplicitTabControllerExample({super.key});
+
+  @override
+  // ignore: library_private_types_in_public_api
+  _ExplicitTabControllerExampleState createState() =>
+      _ExplicitTabControllerExampleState();
+}
+
+class _ExplicitTabControllerExampleState
+    extends State<ExplicitTabControllerExample>
+    with SingleTickerProviderStateMixin {
+  late TabController _tabController;
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 2, vsync: this);
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -34,17 +53,18 @@ class NestedScrollViewWithTabs extends StatelessWidget {
             child: Container(
               padding: const EdgeInsets.all(16.0),
               child: const Text(
-                'This is the header section whose size is determined by its content. Add more text here if you want to increase its height.\nLorem ipsum blablabla',
+                'This is the header section whose size is determined by its content. Add more text here if you want to increase its height.',
                 style: TextStyle(fontSize: 18),
               ),
             ),
           ),
           SliverPersistentHeader(
             delegate: _SliverAppBarDelegate(
-              const TabBar(
+              TabBar(
+                controller: _tabController,
                 labelColor: Colors.black,
                 unselectedLabelColor: Colors.grey,
-                tabs: [
+                tabs: const [
                   Tab(text: 'List'),
                   Tab(text: 'Grid'),
                 ],
@@ -55,6 +75,7 @@ class NestedScrollViewWithTabs extends StatelessWidget {
         ];
       },
       body: TabBarView(
+        controller: _tabController,
         children: <Widget>[
           buildListView(),
           buildGridView(),
